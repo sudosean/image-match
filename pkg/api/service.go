@@ -5,14 +5,18 @@ import (
 	"time"
 )
 
-// Service provides some "date capabilities" to your application
+// Service provides some "date capabilities" to your microservice
+// In Go kit, you should to model a service as an interface
 type Service interface {
 	Status(ctx context.Context) (string, error)
 	Get(ctx context.Context) (string, error)
 	Validate(ctx context.Context, date string) (bool, error)
+	// SAIC interview
+	Info(ctx context.Context)  (string, error)
 }
 
 type dateService struct{}
+// type templateService struct{}
 
 // NewService makes a new Service.
 func NewService() Service {

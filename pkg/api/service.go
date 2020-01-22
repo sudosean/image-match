@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"time"
 )
 
 // Service provides some "date capabilities" to your microservice

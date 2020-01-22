@@ -31,7 +31,7 @@ func (biometricService) Status(ctx context.Context) (string, error) {
 // GetAlgoInfo will return a json object of  the algo
 func (biometricService) GetAlgoInfo(ctx context.Context) (Info,error){
 	 info := Info{
-		 AlgorithmName: "",
+		 AlgorithmName: "Semantic Texton Forests",
 		 AlgorithmVersion: "1.0.1",
 		 AlgorithmType: "Iris",
 		 CompanyName: "MdTF",

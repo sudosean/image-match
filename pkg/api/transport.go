@@ -12,25 +12,32 @@ type statusResponse struct {
 	Status string `json:"status"`
 }
 // createTemplate req/resp schema
-type createTemplateRequest struct{
+type createTemplateRequest struct {
 	ImageData string `json:"imageData"` 
 }
-type createTemplateResponse struct{
+type createTemplateResponse struct {
 	Template string `json:"template"`
 	Err 	 string `json:"err,omitempty"`
 }
+
 // algo info req/resp
 type algoInfoRequest struct{}
 type algoInfoResponse struct {
-	AlgorithmName  string `json:"AlgorithmName"`
-	Err            string `json:"err,omitempty"`
+	Info  Info 	`json:"Info"`	
+	Err  string `json:"err,omitempty"`
 }
-	// AlgorithmVersion string  `json:"AlgorithmVersion"`
-	// AlgorithmType string  `json:"AlgorithmType"`
-	// CompanyName string `json:"CompanyName"`
-	// TechnicalContactEmail string `json:"TechnicalContactEmail"`
-	// RecommendedCPUs int `json:"RecommendedCPUs"`
-	// RecommendedMem int `json:RecommendedMem"`
+
+// algo info data type for response
+type Info struct {
+	AlgorithmName			string 	`json:"AlgorithmName"`
+	AlgorithmVersion 		string  `json:"AlgorithmVersion"`
+	AlgorithmType 			string  `json:"AlgorithmType"`
+	CompanyName 			string 	`json:"CompanyName"`
+	TechnicalContactEmail 	string 	`json:"TechnicalContactEmail"`
+	RecommendedCPUs 		int 	`json:"RecommendedCPUs"`
+	RecommendedMem 			int 	`json:RecommendedMem"`
+}
+	
 
 // compareList req/resp schema
 type compareListRequest struct {

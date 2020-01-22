@@ -31,7 +31,7 @@ func MakeGetAlgoInfoEndpoint(srv Service) endpoint.Endpoint {
 // MakeCreateTemplateEndpoint
 func MakeCreateTemplateEndpoint(srv Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(createTemplateRequest) // we really just need the request, we don't use any value from it
+		req := request.(createTemplateRequest) // same here
 		d, err := srv.CreateTemplate(ctx, req.ImageData)
 		if err != nil {
 			return createTemplateResponse{d, err.Error()}, nil
@@ -42,7 +42,7 @@ func MakeCreateTemplateEndpoint(srv Service) endpoint.Endpoint {
 // MakeStatusEndpoint returns the response from our service "status"
 func MakeStatusEndpoint(srv Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		_ = request.(statusRequest) // we really just need the request, we don't use any value from it
+		_ = request.(statusRequest) // same here
 		s, err := srv.Status(ctx)
 		if err != nil {
 			return statusResponse{s}, err
@@ -75,17 +75,17 @@ func (e Endpoints) Status(ctx context.Context) (string, error) {
 }
 
 // get Algo info mapping
-func (e Endpoints) AlgoInfo(ctx context.Context) (string, error){
+func (e Endpoints) AlgoInfo(ctx context.Context) (Info, error){
 	req := algoInfoRequest{}
 	resp, err := e.GetAlgoInfoEndpoint(ctx, req)
 	if err != nil {
-		return "", err
+		return  Info{} ,err // just returning empty struct for now with err
 	}
 	getAlgoInfoResp := resp.(algoInfoResponse)
 	if getAlgoInfoResp.Err != "" {
-		return "", errors.New(getAlgoInfoResp.Err)
+		return Info{}, errors.New(getAlgoInfoResp.Err)
 	}
-	return getAlgoInfoResp.AlgorithmName, nil
+	return getAlgoInfoResp.Info, nil
 }
 
 // create template mapping

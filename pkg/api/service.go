@@ -9,7 +9,7 @@ import (
 // In Go kit, you should model a service as an interface
 type Service interface {
 	Status(ctx context.Context) (string, error)
-	GetAlgoInfo(ctx context.Context)  (string, error)
+	GetAlgoInfo(ctx context.Context)  (Info, error)
 	CreateTemplate(ctx context.Context, imageData string) (string, error)
 	CompareList(ctx context.Context, templaste string, templateList []string) ([]Comparison, error)
 }
@@ -30,8 +30,17 @@ func (biometricService) Status(ctx context.Context) (string, error) {
 
 
 // GetAlgoInfo will return a json object of  the algo
-func (biometricService) GetAlgoInfo(ctx context.Context) (string,error){
-	 return "Algo name", nil
+func (biometricService) GetAlgoInfo(ctx context.Context) (Info,error){
+	 info := Info{
+		 AlgorithmName: "",
+		 AlgorithmVersion: "1.0.1",
+		 AlgorithmType: "Iris",
+		 CompanyName: "MdTF",
+		 TechnicalContactEmail: "john@mdtf.org",
+		 RecommendedCPUs: 4,
+		 RecommendedMem: 2048,
+	 }
+	 return info, nil
 }
 // create  template
 func (biometricService) CreateTemplate(ctx context.Context, imageData string) (string, error){

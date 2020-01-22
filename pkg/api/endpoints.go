@@ -9,23 +9,36 @@ import (
 
 // Endpoints are exposed
 type Endpoints struct {
-	GetEndpoint      endpoint.Endpoint
-	StatusEndpoint   endpoint.Endpoint
-	ValidateEndpoint endpoint.Endpoint
+	StatusEndpoint   		endpoint.Endpoint
+	GetAlgoInfoEndpoint 	endpoint.Endpoint
+	CreateTemplateEndpoint 	endpoint.Endpoint
+	CompareListEndpoint		endpoint.Endpoint
 }
 
-// MakeGetEndpoint returns the response from our service "get"
-func MakeGetEndpoint(srv Service) endpoint.Endpoint {
+
+// MakeGetAlgoInfoEndpoint returns the response from our service "getAlgoInfo"
+func MakeGetAlgoInfoEndpoint(srv Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		_ = request.(getRequest) // we really just need the request, we don't use any value from it
-		d, err := srv.Get(ctx)
+		_ = request.(algoInfoRequest) // we really just need the request, we don't use any value from it
+		d, err := srv.GetAlgoInfo(ctx)
 		if err != nil {
-			return getResponse{d, err.Error()}, nil
+			return algoInfoResponse{d, err.Error()}, nil
 		}
-		return getResponse{d, ""}, nil
+		return algoInfoResponse{d, ""}, nil
 	}
 }
 
+// MakeCreateTemplateEndpoint
+func MakeCreateTemplateEndpoint(srv Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(createTemplateRequest) // we really just need the request, we don't use any value from it
+		d, err := srv.CreateTemplate(ctx, req.ImageData)
+		if err != nil {
+			return createTemplateResponse{d, err.Error()}, nil
+		}
+		return createTemplateResponse{d, ""}, nil
+	}
+}
 // MakeStatusEndpoint returns the response from our service "status"
 func MakeStatusEndpoint(srv Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
@@ -38,30 +51,16 @@ func MakeStatusEndpoint(srv Service) endpoint.Endpoint {
 	}
 }
 
-// MakeValidateEndpoint returns the response from our service "validate"
-func MakeValidateEndpoint(srv Service) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(validateRequest)
-		b, err := srv.Validate(ctx, req.Date)
+// MakeCompareListEndpoint returns a list of compared items
+func MakeCompareListEndpoint(srv Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error){
+		req := request.(compareListRequest)
+		list, err := srv.CompareList(ctx, req.Template, req.TemplateList)
 		if err != nil {
-			return validateResponse{b, err.Error()}, nil
+			return compareListResponse{list, err.Error()}, nil
 		}
-		return validateResponse{b, ""}, nil
+		return compareListResponse{list,""}, nil
 	}
-}
-
-// Get endpoint mapping
-func (e Endpoints) Get(ctx context.Context) (string, error) {
-	req := getRequest{}
-	resp, err := e.GetEndpoint(ctx, req)
-	if err != nil {
-		return "", err
-	}
-	getResp := resp.(getResponse)
-	if getResp.Err != "" {
-		return "", errors.New(getResp.Err)
-	}
-	return getResp.Date, nil
 }
 
 // Status endpoint mapping
@@ -75,16 +74,44 @@ func (e Endpoints) Status(ctx context.Context) (string, error) {
 	return statusResp.Status, nil
 }
 
-// Validate endpoint mapping
-func (e Endpoints) Validate(ctx context.Context, date string) (bool, error) {
-	req := validateRequest{Date: date}
-	resp, err := e.ValidateEndpoint(ctx, req)
+// get Algo info mapping
+func (e Endpoints) AlgoInfo(ctx context.Context) (string, error){
+	req := algoInfoRequest{}
+	resp, err := e.GetAlgoInfoEndpoint(ctx, req)
 	if err != nil {
-		return false, err
+		return "", err
 	}
-	validateResp := resp.(validateResponse)
-	if validateResp.Err != "" {
-		return false, errors.New(validateResp.Err)
+	getAlgoInfoResp := resp.(algoInfoResponse)
+	if getAlgoInfoResp.Err != "" {
+		return "", errors.New(getAlgoInfoResp.Err)
 	}
-	return validateResp.Valid, nil
+	return getAlgoInfoResp.AlgorithmName, nil
+}
+
+// create template mapping
+func (e Endpoints) CreateTemplate(ctx context.Context, imageData string) (string, error){
+	req := createTemplateRequest{ImageData: imageData}
+	resp, err := e.CreateTemplateEndpoint(ctx, req)
+	if err != nil {
+		return "error", err
+	}
+	CreateTemplateResp := resp.(createTemplateResponse)
+	if CreateTemplateResp.Err != "" {
+		return "error - CreateTemplate", errors.New(CreateTemplateResp.Err)
+	}
+	return CreateTemplateResp.Template, nil
+}
+
+// compare list mapping
+func (e Endpoints) CompareList(ctx context.Context, template string, templateList []string) ([]Comparison, error){
+	req := compareListRequest{Template: template, TemplateList: templateList}
+	res, err := e.CompareListEndpoint(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	CompareListResponse := res.(compareListResponse)
+	if CompareListResponse.Err != "" {
+		return nil, errors.New(CompareListResponse.Err)
+	}
+	return CompareListResponse.Comparison, nil
 }

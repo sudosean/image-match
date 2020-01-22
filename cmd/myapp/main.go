@@ -35,7 +35,7 @@ func main() {
 	)
 	flag.Parse()
 	ctx := context.Background()
-	// our napodate service
+	// our api service
 	srv := api.NewService()
 	errChan := make(chan error)
 
@@ -47,9 +47,10 @@ func main() {
 
 	// mapping endpoints
 	endpoints := api.Endpoints{
-		GetEndpoint:      api.MakeGetEndpoint(srv),
 		StatusEndpoint:   api.MakeStatusEndpoint(srv),
-		ValidateEndpoint: api.MakeValidateEndpoint(srv),
+		GetAlgoInfoEndpoint: api.MakeGetAlgoInfoEndpoint(srv),
+		CreateTemplateEndpoint: api.MakeCreateTemplateEndpoint(srv),
+		CompareListEndpoint: api.MakeCompareListEndpoint(srv),
 	}
 
 	// HTTP transport

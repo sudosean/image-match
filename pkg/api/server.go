@@ -19,17 +19,24 @@ func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		encodeResponse,
 	))
 
-	r.Methods("GET").Path("/get").Handler(httptransport.NewServer(
-		endpoints.GetEndpoint,
-		decodeGetRequest,
+	r.Methods("GET").Path("/v1/info").Handler(httptransport.NewServer(
+		endpoints.GetAlgoInfoEndpoint,
+		decodeAlgoInfoRequest,
 		encodeResponse,
 	))
 
-	r.Methods("POST").Path("/validate").Handler(httptransport.NewServer(
-		endpoints.ValidateEndpoint,
-		decodeValidateRequest,
+	r.Methods("POST").Path("/v1/create-template").Handler(httptransport.NewServer(
+		endpoints.CreateTemplateEndpoint,
+		decodeCreateTemplateRequest,
 		encodeResponse,
 	))
+
+	r.Methods("POST").Path("/v1/compare-list").Handler(httptransport.NewServer(
+		endpoints.CompareListEndpoint,
+		decodeCompareListRequest,
+		encodeResponse,
+	))
+
 
 	return r
 }

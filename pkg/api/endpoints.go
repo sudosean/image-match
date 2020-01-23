@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"errors"
-
 	"github.com/go-kit/kit/endpoint"
 )
 
@@ -90,14 +89,16 @@ func (e Endpoints) AlgoInfo(ctx context.Context) (Info, error){
 
 // create template mapping
 func (e Endpoints) CreateTemplate(ctx context.Context, imageData string) (string, error){
+	
 	req := createTemplateRequest{ImageData: imageData}
+	
 	resp, err := e.CreateTemplateEndpoint(ctx, req)
 	if err != nil {
 		return "error", err
 	}
 	CreateTemplateResp := resp.(createTemplateResponse)
 	if CreateTemplateResp.Err != "" {
-		return "error - CreateTemplate", errors.New(CreateTemplateResp.Err)
+		return "{status: 500 , message: error creating template}", errors.New(CreateTemplateResp.Err)
 	}
 	return CreateTemplateResp.Template, nil
 }

@@ -2,7 +2,14 @@ package api
 
 import (
 	"context"
+	"errors"
+	log "github.com/sirupsen/logrus"
 )
+
+func init(){
+	log.SetFormatter(&log.TextFormatter{})
+	log.SetReportCaller(true)
+}
 
 // Service provides some "date capabilities" to your microservice
 // In Go kit, you should model a service as an interface
@@ -33,7 +40,7 @@ func (biometricService) GetAlgoInfo(ctx context.Context) (Info,error){
 	 info := Info{
 		 AlgorithmName: "Semantic Texton Forests",
 		 AlgorithmVersion: "1.0.1",
-		 AlgorithmType: "Iris",
+		 AlgorithmType: "Face",
 		 CompanyName: "MdTF",
 		 TechnicalContactEmail: "john@mdtf.org",
 		 RecommendedCPUs: 4,
@@ -43,12 +50,16 @@ func (biometricService) GetAlgoInfo(ctx context.Context) (Info,error){
 }
 // create  template
 func (biometricService) CreateTemplate(ctx context.Context, imageData string) (string, error){
+	log.Println("image data",imageData)
+	if len(imageData) == 0{
+		return "{status:400, message: Bad Request. ImageData Attribute must be set}", errors.New("request error")
+	}
 	return "dGhpcyBzZW50ZW5jZSBpcyBhbiBleGFtcGxlIHRlbXBsYXRlLi4K", nil
 }
 
 // compare list
 func (biometricService) CompareList(ctx context.Context, template string, templastelist []string) ([]Comparison, error){
-	result := make([]Comparison,1,1 )
+	result := make([]Comparison,len(templastelist))
 	for index := 0; index < len(templastelist); index++ {
 		compare := Comparison{
 			Score: 8734,

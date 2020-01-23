@@ -7,3 +7,9 @@ github.com/go-kit/kit/transport/http
 github.com/go-logfmt/logfmt
 # github.com/gorilla/mux v1.7.3
 github.com/gorilla/mux
+# github.com/konsorten/go-windows-terminal-sequences v1.0.2
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/sirupsen/logrus v1.4.2
+github.com/sirupsen/logrus
+# golang.org/x/sys v0.0.0-20200122134326-e047566fdf82
+golang.org/x/sys/unix
